@@ -34,6 +34,11 @@ const MusicPlayer = ({
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(75);
 
+  // Reset current time when song changes
+  useEffect(() => {
+    setCurrentTime(0);
+  }, [currentSong?.id]);
+
   useEffect(() => {
     if (isPlaying && currentSong) {
       const interval = setInterval(() => {
@@ -57,6 +62,16 @@ const MusicPlayer = ({
 
   const handleSeek = (value: number[]) => {
     setCurrentTime(value[0]);
+  };
+
+  const handleNext = () => {
+    setCurrentTime(0);
+    onNext();
+  };
+
+  const handlePrevious = () => {
+    setCurrentTime(0);
+    onPrevious();
   };
 
   if (!currentSong) return null;
@@ -95,7 +110,7 @@ const MusicPlayer = ({
             <Button
               variant="ghost"
               size="icon"
-              onClick={onPrevious}
+              onClick={handlePrevious}
               className="text-gray-300 hover:text-white"
             >
               <SkipBack size={20} />
@@ -109,7 +124,7 @@ const MusicPlayer = ({
             <Button
               variant="ghost"
               size="icon"
-              onClick={onNext}
+              onClick={handleNext}
               className="text-gray-300 hover:text-white"
             >
               <SkipForward size={20} />

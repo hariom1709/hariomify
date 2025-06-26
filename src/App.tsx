@@ -4,12 +4,12 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Instagram } from 'lucide-react';
 import Navigation from "./components/Navigation";
 import MusicPlayer from "./components/MusicPlayer";
 import Index from "./pages/Index";
 import Browse from "./pages/Browse";
 import Favorites from "./pages/Favorites";
-import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -207,12 +207,18 @@ const App = () => {
                     />
                   } 
                 />
-                <Route 
-                  path="/profile" 
-                  element={<Profile favorites={favorites} />} 
-                />
                 <Route path="*" element={<NotFound />} />
               </Routes>
+
+              {/* Instagram Footer */}
+              <div className="fixed bottom-0 left-0 right-0 bg-music-card/95 backdrop-blur-lg border-t border-white/10 p-4 z-30 mb-20">
+                <div className="container mx-auto flex items-center justify-center space-x-3">
+                  <Instagram size={24} className="text-pink-500" />
+                  <p className="text-white text-center">
+                    Agr jeevan mai khush rhna hai toh mujhe instagram pe follow krlo😝
+                  </p>
+                </div>
+              </div>
 
               <MusicPlayer
                 currentSong={currentSong}
