@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -214,9 +215,14 @@ const App = () => {
               <div className="fixed bottom-0 left-0 right-0 bg-music-card/95 backdrop-blur-lg border-t border-white/10 p-4 z-30 mb-20">
                 <div className="container mx-auto flex items-center justify-center space-x-3">
                   <Instagram size={24} className="text-pink-500" />
-                  <p className="text-white text-center">
-                    Agr jeevan mai khush rhna hai toh mujhe instagram pe follow krlo😝
-                  </p>
+                  <div className="text-white text-center">
+                    <p className="mb-1">
+                      Agr jeevan mai khush rhna hai toh mujhe instagram pe follow krlo😝
+                    </p>
+                    <p className="text-sm text-gray-300">
+                      📞 +91 8799765492
+                    </p>
+                  </div>
                 </div>
               </div>
 
