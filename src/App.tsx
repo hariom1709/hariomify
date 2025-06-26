@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -101,9 +100,29 @@ const App = () => {
     },
   ]);
 
+  // Initialize theme on component mount
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    }
+  }, [isDarkMode]);
+
   const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('light');
+    setIsDarkMode(prevMode => {
+      const newMode = !prevMode;
+      if (newMode) {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      }
+      return newMode;
+    });
   };
 
   const handlePlaySong = (song: Song) => {
