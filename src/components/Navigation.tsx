@@ -31,7 +31,7 @@ const Navigation = ({
   return <nav className="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-white/10">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
-          <img src="/lovable-uploads/0be6db75-0d18-479d-9dfa-933df887a527.png" alt="Hariomify Logo" className="w-100 h-100 object-contain" />
+          <img src="/lovable-uploads/0be6db75-0d18-479d-9dfa-933df887a527.png" alt="Hariomify Logo" className="w-10 h-10 object-contain" />
           <span className="text-2xl font-bold bg-gradient-to-r from-music-primary to-music-secondary bg-clip-text text-transparent">
             Hariomify
           </span>
