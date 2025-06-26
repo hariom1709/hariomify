@@ -1,5 +1,7 @@
 
 import { useState, useEffect } from 'react';
+import { Heart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import SongCard from '@/components/SongCard';
 
 interface Song {
