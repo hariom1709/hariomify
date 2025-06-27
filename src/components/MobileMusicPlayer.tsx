@@ -51,9 +51,7 @@ const MobileMusicPlayer = ({
           
           
         </div>
-        <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
-          <MoreVertical size={24} />
-        </Button>
+        
       </div>
 
       {/* Album Art */}
