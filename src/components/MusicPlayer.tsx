@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Heart, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Song {
   id: string;
@@ -20,6 +21,7 @@ interface MusicPlayerProps {
   onPrevious: () => void;
   onToggleFavorite: (songId: string) => void;
   favorites: string[];
+  onSongClick?: () => void;
 }
 
 const MusicPlayer = ({
@@ -30,9 +32,11 @@ const MusicPlayer = ({
   onPrevious,
   onToggleFavorite,
   favorites,
+  onSongClick,
 }: MusicPlayerProps) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(75);
+  const isMobile = useIsMobile();
 
   // Reset current time when song changes
   useEffect(() => {
@@ -74,6 +78,12 @@ const MusicPlayer = ({
     onPrevious();
   };
 
+  const handleSongInfoClick = () => {
+    if (isMobile && onSongClick) {
+      onSongClick();
+    }
+  };
+
   if (!currentSong) return null;
 
   const isFavorite = favorites.includes(currentSong.id);
@@ -82,7 +92,10 @@ const MusicPlayer = ({
     <div className="fixed bottom-0 left-0 right-0 bg-music-card/95 backdrop-blur-lg border-t border-white/10 p-4 z-40">
       <div className="container mx-auto flex items-center justify-between">
         {/* Song Info */}
-        <div className="flex items-center space-x-4 flex-1 min-w-0">
+        <div 
+          className="flex items-center space-x-4 flex-1 min-w-0 cursor-pointer md:cursor-default"
+          onClick={handleSongInfoClick}
+        >
           <img
             src={currentSong.thumbnail}
             alt={currentSong.title}
@@ -95,7 +108,10 @@ const MusicPlayer = ({
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => onToggleFavorite(currentSong.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(currentSong.id);
+            }}
             className={`${
               isFavorite ? 'text-red-500 hover:text-red-400' : 'text-gray-400 hover:text-white'
             }`}
