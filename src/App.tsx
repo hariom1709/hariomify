@@ -13,9 +13,7 @@ import Browse from "./pages/Browse";
 import Favorites from "./pages/Favorites";
 import NotFound from "./pages/NotFound";
 import { useIsMobile } from "./hooks/use-mobile";
-
 const queryClient = new QueryClient();
-
 interface Song {
   id: string;
   title: string;
@@ -23,7 +21,6 @@ interface Song {
   thumbnail: string;
   duration: number;
 }
-
 const App = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [currentSong, setCurrentSong] = useState<Song | null>(null);
@@ -32,7 +29,6 @@ const App = () => {
   const [showMobilePlayer, setShowMobilePlayer] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const isMobile = useIsMobile();
-
   const [playlist] = useState<Song[]>([{
     id: '1',
     title: 'Midnight Dreams',
@@ -110,7 +106,7 @@ const App = () => {
   useEffect(() => {
     if (isPlaying && currentSong) {
       const interval = setInterval(() => {
-        setCurrentTime((prev) => {
+        setCurrentTime(prev => {
           if (prev >= currentSong.duration) {
             handleNext();
             return 0;
@@ -126,7 +122,6 @@ const App = () => {
   useEffect(() => {
     setCurrentTime(0);
   }, [currentSong?.id]);
-
   const toggleTheme = () => {
     setIsDarkMode(prevMode => {
       const newMode = !prevMode;
@@ -140,7 +135,6 @@ const App = () => {
       return newMode;
     });
   };
-
   const handlePlaySong = (song: Song) => {
     if (currentSong?.id === song.id) {
       setIsPlaying(!isPlaying);
@@ -149,45 +143,33 @@ const App = () => {
       setIsPlaying(true);
     }
   };
-
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
   };
-
   const handleNext = () => {
     if (!currentSong) return;
     const currentIndex = playlist.findIndex(song => song.id === currentSong.id);
     const nextIndex = (currentIndex + 1) % playlist.length;
     setCurrentSong(playlist[nextIndex]);
   };
-
   const handlePrevious = () => {
     if (!currentSong) return;
     const currentIndex = playlist.findIndex(song => song.id === currentSong.id);
     const previousIndex = currentIndex === 0 ? playlist.length - 1 : currentIndex - 1;
     setCurrentSong(playlist[previousIndex]);
   };
-
   const handleToggleFavorite = (songId: string) => {
-    setFavorites(prev => 
-      prev.includes(songId) 
-        ? prev.filter(id => id !== songId) 
-        : [...prev, songId]
-    );
+    setFavorites(prev => prev.includes(songId) ? prev.filter(id => id !== songId) : [...prev, songId]);
   };
-
   const handleSeek = (value: number[]) => {
     setCurrentTime(value[0]);
   };
-
   const handleSongClick = () => {
     if (isMobile && currentSong) {
       setShowMobilePlayer(true);
     }
   };
-
-  return (
-    <QueryClientProvider client={queryClient}>
+  return <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className={isDarkMode ? 'dark' : 'light'}>
           <Toaster />
@@ -204,48 +186,16 @@ const App = () => {
               </Routes>
 
               {/* Instagram Footer */}
-              <div className="fixed bottom-20 left-0 right-0 bg-music-card/80 backdrop-blur-sm border-t border-white/10 p-4 text-center md:bottom-24">
-                <div className="flex items-center justify-center space-x-2 text-white">
-                  <Instagram size={20} className="text-pink-500" />
-                  <span className="text-sm">
-                    Agr jeevan mai khush rhna hai toh mujhe instagram pe follow krlo😝
-                  </span>
-                </div>
-                <p className="text-xs text-gray-400 mt-1">+91 8799765492</p>
-              </div>
+              
 
-              <MusicPlayer 
-                currentSong={currentSong} 
-                isPlaying={isPlaying} 
-                onPlayPause={handlePlayPause} 
-                onNext={handleNext} 
-                onPrevious={handlePrevious} 
-                onToggleFavorite={handleToggleFavorite} 
-                favorites={favorites}
-                onSongClick={handleSongClick}
-              />
+              <MusicPlayer currentSong={currentSong} isPlaying={isPlaying} onPlayPause={handlePlayPause} onNext={handleNext} onPrevious={handlePrevious} onToggleFavorite={handleToggleFavorite} favorites={favorites} onSongClick={handleSongClick} />
 
               {/* Mobile Music Player */}
-              {showMobilePlayer && (
-                <MobileMusicPlayer
-                  currentSong={currentSong}
-                  isPlaying={isPlaying}
-                  onPlayPause={handlePlayPause}
-                  onNext={handleNext}
-                  onPrevious={handlePrevious}
-                  onToggleFavorite={handleToggleFavorite}
-                  favorites={favorites}
-                  onClose={() => setShowMobilePlayer(false)}
-                  currentTime={currentTime}
-                  onSeek={handleSeek}
-                />
-              )}
+              {showMobilePlayer && <MobileMusicPlayer currentSong={currentSong} isPlaying={isPlaying} onPlayPause={handlePlayPause} onNext={handleNext} onPrevious={handlePrevious} onToggleFavorite={handleToggleFavorite} favorites={favorites} onClose={() => setShowMobilePlayer(false)} currentTime={currentTime} onSeek={handleSeek} />}
             </div>
           </BrowserRouter>
         </div>
       </TooltipProvider>
-    </QueryClientProvider>
-  );
+    </QueryClientProvider>;
 };
-
 export default App;
