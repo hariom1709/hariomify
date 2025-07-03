@@ -24,74 +24,74 @@ const Favorites = ({ onPlaySong, currentSong, isPlaying, onToggleFavorite, favor
   const [allSongs] = useState<Song[]>([
     {
       id: '1',
-      title: 'Midnight Dreams',
-      artist: 'Luna Eclipse',
-      thumbnail: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop',
-      duration: 180,
+      title: '52 Bars',
+      artist: 'Hip Hop Artist',
+      thumbnail: '/lovable-uploads/9374816d-4708-4000-b9b8-bff234c9c91d.png',
+      duration: 210
     },
     {
       id: '2',
-      title: 'Electric Pulse',
-      artist: 'Neon Waves',
-      thumbnail: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop',
-      duration: 210,
+      title: 'I Guess',
+      artist: 'Alternative Rock',
+      thumbnail: '/lovable-uploads/d9d57ae0-27fc-4b06-a8a4-171299ad3643.png',
+      duration: 185
     },
     {
       id: '3',
-      title: 'Ocean Breeze',
-      artist: 'Coastal Vibes',
-      thumbnail: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=400&h=400&fit=crop',
-      duration: 195,
+      title: 'Itna na mujhse tu pyaar badhta',
+      artist: 'Bollywood Classic',
+      thumbnail: '/lovable-uploads/b8f13b17-e273-4227-a62d-a305fb944f03.png',
+      duration: 240
     },
     {
       id: '4',
-      title: 'Digital Love',
-      artist: 'Cyber Hearts',
-      thumbnail: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=400&fit=crop',
-      duration: 225,
+      title: 'Mera jeevan kora kagaz',
+      artist: 'Classic Romance',
+      thumbnail: '/lovable-uploads/b7d51d48-d9ef-4d56-8838-880ddfa8eb2b.png',
+      duration: 195
     },
     {
       id: '5',
-      title: 'Sunset Boulevard',
-      artist: 'Golden Hour',
-      thumbnail: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=400&h=400&fit=crop',
-      duration: 165,
+      title: 'Sunflower',
+      artist: 'Spider-Verse OST',
+      thumbnail: '/lovable-uploads/a0c230df-5f98-4f5e-8ea9-4231576bd704.png',
+      duration: 158
     },
     {
       id: '6',
-      title: 'Forest Whispers',
-      artist: 'Nature Sounds',
-      thumbnail: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=400&fit=crop',
-      duration: 240,
+      title: 'A Man without Love',
+      artist: 'Classic Pop',
+      thumbnail: '/lovable-uploads/91e99ec5-6a86-44b8-bc45-bad14d7b3ae1.png',
+      duration: 205
     },
     {
       id: '7',
-      title: 'Starlight Serenade',
-      artist: 'Celestial Dreams',
-      thumbnail: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop&q=80',
-      duration: 200,
+      title: 'Blue Bird',
+      artist: 'Anime Soundtrack',
+      thumbnail: '/lovable-uploads/4b9b9ed7-4a2a-4b61-ba41-fe517e01cc79.png',
+      duration: 220
     },
     {
       id: '8',
-      title: 'Rhythm Machine',
-      artist: 'Beat Factory',
-      thumbnail: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&q=80',
-      duration: 185,
+      title: 'Nature',
+      artist: 'Contemporary Hip Hop',
+      thumbnail: '/lovable-uploads/c284f4f7-e1d9-4a5a-8016-5bee157222be.png',
+      duration: 175
     },
     {
       id: '9',
-      title: 'Melodic Journey',
-      artist: 'Sound Explorers',
-      thumbnail: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=400&h=400&fit=crop&q=80',
-      duration: 215,
+      title: 'Roots',
+      artist: 'Feel Good Music',
+      thumbnail: '/lovable-uploads/4d699a69-d3cb-4f80-a460-739887c2f80a.png',
+      duration: 190
     },
     {
       id: '10',
-      title: 'Cosmic Dance',
-      artist: 'Space Groove',
-      thumbnail: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=400&fit=crop&q=80',
-      duration: 175,
-    },
+      title: 'Shinunoga e wa',
+      artist: 'Japanese Pop',
+      thumbnail: '/lovable-uploads/c841dfe5-d375-46b8-afac-c36d477f491f.png',
+      duration: 200
+    }
   ]);
 
   const favoriteSongs = allSongs.filter(song => favorites.includes(song.id));
