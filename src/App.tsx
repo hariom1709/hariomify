@@ -4,7 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Instagram } from 'lucide-react';
 import Navigation from "./components/Navigation";
 import MusicPlayer from "./components/MusicPlayer";
 import MobileMusicPlayer from "./components/MobileMusicPlayer";
@@ -13,83 +12,123 @@ import Browse from "./pages/Browse";
 import Favorites from "./pages/Favorites";
 import NotFound from "./pages/NotFound";
 import { useIsMobile } from "./hooks/use-mobile";
+import { useAudioPlayer } from "./hooks/useAudioPlayer";
+
 const queryClient = new QueryClient();
+
 interface Song {
   id: string;
   title: string;
   artist: string;
   thumbnail: string;
   duration: number;
+  audioUrl?: string;
 }
+
 const App = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [currentSong, setCurrentSong] = useState<Song | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showMobilePlayer, setShowMobilePlayer] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
   const isMobile = useIsMobile();
-  const [playlist] = useState<Song[]>([{
-    id: '1',
-    title: 'Midnight Dreams',
-    artist: 'Luna Eclipse',
-    thumbnail: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop',
-    duration: 180
-  }, {
-    id: '2',
-    title: 'Electric Pulse',
-    artist: 'Neon Waves',
-    thumbnail: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop',
-    duration: 210
-  }, {
-    id: '3',
-    title: 'Ocean Breeze',
-    artist: 'Coastal Vibes',
-    thumbnail: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=400&h=400&fit=crop',
-    duration: 195
-  }, {
-    id: '4',
-    title: 'Digital Love',
-    artist: 'Cyber Hearts',
-    thumbnail: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=400&fit=crop',
-    duration: 225
-  }, {
-    id: '5',
-    title: 'Sunset Boulevard',
-    artist: 'Golden Hour',
-    thumbnail: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=400&h=400&fit=crop',
-    duration: 165
-  }, {
-    id: '6',
-    title: 'Forest Whispers',
-    artist: 'Nature Sounds',
-    thumbnail: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=400&fit=crop',
-    duration: 240
-  }, {
-    id: '7',
-    title: 'Starlight Serenade',
-    artist: 'Celestial Dreams',
-    thumbnail: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop&q=80',
-    duration: 200
-  }, {
-    id: '8',
-    title: 'Rhythm Machine',
-    artist: 'Beat Factory',
-    thumbnail: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&q=80',
-    duration: 185
-  }, {
-    id: '9',
-    title: 'Melodic Journey',
-    artist: 'Sound Explorers',
-    thumbnail: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=400&h=400&fit=crop&q=80',
-    duration: 215
-  }, {
-    id: '10',
-    title: 'Cosmic Dance',
-    artist: 'Space Groove',
-    thumbnail: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=400&fit=crop&q=80',
-    duration: 175
-  }]);
+  
+  const {
+    isPlaying,
+    currentTime,
+    duration,
+    volume,
+    isLoading,
+    error,
+    loadSong,
+    play,
+    pause,
+    seek,
+    changeVolume,
+  } = useAudioPlayer();
+
+  // Sample playlist with placeholder audio URLs (users can replace these with their uploaded files)
+  const [playlist] = useState<Song[]>([
+    {
+      id: '1',
+      title: 'Midnight Dreams',
+      artist: 'Luna Eclipse',
+      thumbnail: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop',
+      duration: 180,
+      audioUrl: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3' // Placeholder - replace with your uploaded files
+    },
+    {
+      id: '2',
+      title: 'Electric Pulse',
+      artist: 'Neon Waves',
+      thumbnail: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop',
+      duration: 210,
+      audioUrl: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3'
+    },
+    {
+      id: '3',
+      title: 'Ocean Breeze',
+      artist: 'Coastal Vibes',
+      thumbnail: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=400&h=400&fit=crop',
+      duration: 195,
+      audioUrl: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3'
+    },
+    {
+      id: '4',
+      title: 'Digital Love',
+      artist: 'Cyber Hearts',
+      thumbnail: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=400&fit=crop',
+      duration: 225,
+      audioUrl: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3'
+    },
+    {
+      id: '5',
+      title: 'Sunset Boulevard',
+      artist: 'Golden Hour',
+      thumbnail: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=400&h=400&fit=crop',
+      duration: 165,
+      audioUrl: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3'
+    },
+    {
+      id: '6',
+      title: 'Forest Whispers',
+      artist: 'Nature Sounds',
+      thumbnail: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=400&fit=crop',
+      duration: 240,
+      audioUrl: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3'
+    },
+    {
+      id: '7',
+      title: 'Starlight Serenade',
+      artist: 'Celestial Dreams',
+      thumbnail: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop&q=80',
+      duration: 200,
+      audioUrl: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3'
+    },
+    {
+      id: '8',
+      title: 'Rhythm Machine',
+      artist: 'Beat Factory',
+      thumbnail: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&q=80',
+      duration: 185,
+      audioUrl: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3'
+    },
+    {
+      id: '9',
+      title: 'Melodic Journey',
+      artist: 'Sound Explorers',
+      thumbnail: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=400&h=400&fit=crop&q=80',
+      duration: 215,
+      audioUrl: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3'
+    },
+    {
+      id: '10',
+      title: 'Cosmic Dance',
+      artist: 'Space Groove',
+      thumbnail: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=400&fit=crop&q=80',
+      duration: 175,
+      audioUrl: 'https://www.soundjay.com/misc/sounds/magic-chime-02.mp3'
+    }
+  ]);
 
   // Initialize theme on component mount
   useEffect(() => {
@@ -102,26 +141,13 @@ const App = () => {
     }
   }, [isDarkMode]);
 
-  // Timer for current time
+  // Load song when currentSong changes
   useEffect(() => {
-    if (isPlaying && currentSong) {
-      const interval = setInterval(() => {
-        setCurrentTime(prev => {
-          if (prev >= currentSong.duration) {
-            handleNext();
-            return 0;
-          }
-          return prev + 1;
-        });
-      }, 1000);
-      return () => clearInterval(interval);
+    if (currentSong?.audioUrl) {
+      loadSong(currentSong.audioUrl);
     }
-  }, [isPlaying, currentSong]);
+  }, [currentSong?.id, loadSong]);
 
-  // Reset current time when song changes
-  useEffect(() => {
-    setCurrentTime(0);
-  }, [currentSong?.id]);
   const toggleTheme = () => {
     setIsDarkMode(prevMode => {
       const newMode = !prevMode;
@@ -135,41 +161,65 @@ const App = () => {
       return newMode;
     });
   };
-  const handlePlaySong = (song: Song) => {
+
+  const handlePlaySong = async (song: Song) => {
     if (currentSong?.id === song.id) {
-      setIsPlaying(!isPlaying);
+      if (isPlaying) {
+        pause();
+      } else {
+        await play();
+      }
     } else {
       setCurrentSong(song);
-      setIsPlaying(true);
+      // Audio will be loaded in the useEffect above, then we can play
+      setTimeout(async () => {
+        await play();
+      }, 100);
     }
   };
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
+
+  const handlePlayPause = async () => {
+    if (isPlaying) {
+      pause();
+    } else {
+      await play();
+    }
   };
+
   const handleNext = () => {
     if (!currentSong) return;
     const currentIndex = playlist.findIndex(song => song.id === currentSong.id);
     const nextIndex = (currentIndex + 1) % playlist.length;
     setCurrentSong(playlist[nextIndex]);
   };
+
   const handlePrevious = () => {
     if (!currentSong) return;
     const currentIndex = playlist.findIndex(song => song.id === currentSong.id);
     const previousIndex = currentIndex === 0 ? playlist.length - 1 : currentIndex - 1;
     setCurrentSong(playlist[previousIndex]);
   };
+
   const handleToggleFavorite = (songId: string) => {
-    setFavorites(prev => prev.includes(songId) ? prev.filter(id => id !== songId) : [...prev, songId]);
+    setFavorites(prev => 
+      prev.includes(songId) 
+        ? prev.filter(id => id !== songId) 
+        : [...prev, songId]
+    );
   };
+
   const handleSeek = (value: number[]) => {
-    setCurrentTime(value[0]);
+    seek(value[0]);
   };
+
   const handleSongClick = () => {
     if (isMobile && currentSong) {
       setShowMobilePlayer(true);
     }
   };
-  return <QueryClientProvider client={queryClient}>
+
+  return (
+    <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className={isDarkMode ? 'dark' : 'light'}>
           <Toaster />
@@ -179,23 +229,84 @@ const App = () => {
               <Navigation isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
               
               <Routes>
-                <Route path="/" element={<Index onPlaySong={handlePlaySong} currentSong={currentSong} isPlaying={isPlaying} onToggleFavorite={handleToggleFavorite} favorites={favorites} />} />
-                <Route path="/browse" element={<Browse onPlaySong={handlePlaySong} currentSong={currentSong} isPlaying={isPlaying} onToggleFavorite={handleToggleFavorite} favorites={favorites} />} />
-                <Route path="/favorites" element={<Favorites onPlaySong={handlePlaySong} currentSong={currentSong} isPlaying={isPlaying} onToggleFavorite={handleToggleFavorite} favorites={favorites} />} />
+                <Route 
+                  path="/" 
+                  element={
+                    <Index 
+                      onPlaySong={handlePlaySong} 
+                      currentSong={currentSong} 
+                      isPlaying={isPlaying} 
+                      onToggleFavorite={handleToggleFavorite} 
+                      favorites={favorites} 
+                    />
+                  } 
+                />
+                <Route 
+                  path="/browse" 
+                  element={
+                    <Browse 
+                      onPlaySong={handlePlaySong} 
+                      currentSong={currentSong} 
+                      isPlaying={isPlaying} 
+                      onToggleFavorite={handleToggleFavorite} 
+                      favorites={favorites} 
+                    />
+                  } 
+                />
+                <Route 
+                  path="/favorites" 
+                  element={
+                    <Favorites 
+                      onPlaySong={handlePlaySong} 
+                      currentSong={currentSong} 
+                      isPlaying={isPlaying} 
+                      onToggleFavorite={handleToggleFavorite} 
+                      favorites={favorites} 
+                    />
+                  } 
+                />
                 <Route path="*" element={<NotFound />} />
               </Routes>
 
-              {/* Instagram Footer */}
-              
+              <MusicPlayer 
+                currentSong={currentSong} 
+                isPlaying={isPlaying} 
+                onPlayPause={handlePlayPause} 
+                onNext={handleNext} 
+                onPrevious={handlePrevious} 
+                onToggleFavorite={handleToggleFavorite} 
+                favorites={favorites} 
+                onSongClick={handleSongClick}
+                currentTime={currentTime}
+                duration={duration || currentSong?.duration || 0}
+                onSeek={handleSeek}
+                volume={volume}
+                onVolumeChange={changeVolume}
+                isLoading={isLoading}
+                error={error}
+              />
 
-              <MusicPlayer currentSong={currentSong} isPlaying={isPlaying} onPlayPause={handlePlayPause} onNext={handleNext} onPrevious={handlePrevious} onToggleFavorite={handleToggleFavorite} favorites={favorites} onSongClick={handleSongClick} />
-
-              {/* Mobile Music Player */}
-              {showMobilePlayer && <MobileMusicPlayer currentSong={currentSong} isPlaying={isPlaying} onPlayPause={handlePlayPause} onNext={handleNext} onPrevious={handlePrevious} onToggleFavorite={handleToggleFavorite} favorites={favorites} onClose={() => setShowMobilePlayer(false)} currentTime={currentTime} onSeek={handleSeek} />}
+              {showMobilePlayer && (
+                <MobileMusicPlayer 
+                  currentSong={currentSong} 
+                  isPlaying={isPlaying} 
+                  onPlayPause={handlePlayPause} 
+                  onNext={handleNext} 
+                  onPrevious={handlePrevious} 
+                  onToggleFavorite={handleToggleFavorite} 
+                  favorites={favorites} 
+                  onClose={() => setShowMobilePlayer(false)} 
+                  currentTime={currentTime} 
+                  onSeek={handleSeek}
+                  duration={duration || currentSong?.duration || 0}
+                />
+              )}
             </div>
           </BrowserRouter>
         </div>
       </TooltipProvider>
-    </QueryClientProvider>;
+    </QueryClientProvider>
+  );
 };
+
 export default App;

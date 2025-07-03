@@ -1,14 +1,17 @@
-import { useState } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Heart, MoreVertical, ChevronDown, Share, List } from 'lucide-react';
+
+import { Play, Pause, SkipBack, SkipForward, Heart, MoreVertical, ChevronDown, Share, List, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
+
 interface Song {
   id: string;
   title: string;
   artist: string;
   thumbnail: string;
   duration: number;
+  audioUrl?: string;
 }
+
 interface MobileMusicPlayerProps {
   currentSong: Song | null;
   isPlaying: boolean;
@@ -20,7 +23,11 @@ interface MobileMusicPlayerProps {
   onClose: () => void;
   currentTime: number;
   onSeek: (value: number[]) => void;
+  duration: number;
+  isLoading?: boolean;
+  error?: string | null;
 }
+
 const MobileMusicPlayer = ({
   currentSong,
   isPlaying,
@@ -31,33 +38,44 @@ const MobileMusicPlayer = ({
   favorites,
   onClose,
   currentTime,
-  onSeek
+  onSeek,
+  duration,
+  isLoading,
+  error
 }: MobileMusicPlayerProps) => {
-  const [volume, setVolume] = useState(75);
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
   if (!currentSong) return null;
+
   const isFavorite = favorites.includes(currentSong.id);
-  return <div className="fixed inset-0 bg-gradient-to-b from-teal-600 to-teal-800 z-50 flex flex-col">
+
+  return (
+    <div className="fixed inset-0 bg-gradient-to-b from-teal-600 to-teal-800 z-50 flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between p-4 text-white">
         <Button variant="ghost" size="icon" onClick={onClose} className="text-white hover:bg-white/20">
           <ChevronDown size={24} />
         </Button>
         <div className="text-center">
-          
-          
+          <p className="text-sm opacity-80">Playing from Playlist</p>
         </div>
-        
+        <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+          <MoreVertical size={24} />
+        </Button>
       </div>
 
       {/* Album Art */}
       <div className="flex-1 flex items-center justify-center px-8">
         <div className="w-full max-w-sm">
-          <img src={currentSong.thumbnail} alt={currentSong.title} className="w-full aspect-square object-cover rounded-lg shadow-2xl" />
+          <img 
+            src={currentSong.thumbnail} 
+            alt={currentSong.title} 
+            className="w-full aspect-square object-cover rounded-lg shadow-2xl" 
+          />
         </div>
       </div>
 
@@ -67,8 +85,14 @@ const MobileMusicPlayer = ({
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-bold text-white mb-1 truncate">{currentSong.title}</h2>
             <p className="text-lg text-white/80 truncate">{currentSong.artist}</p>
+            {error && <p className="text-red-300 text-sm mt-1">{error}</p>}
           </div>
-          <Button variant="ghost" size="icon" onClick={() => onToggleFavorite(currentSong.id)} className={`ml-4 ${isFavorite ? 'text-green-400' : 'text-white/60'} hover:bg-white/20`}>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => onToggleFavorite(currentSong.id)} 
+            className={`ml-4 ${isFavorite ? 'text-green-400' : 'text-white/60'} hover:bg-white/20`}
+          >
             <Heart size={24} fill={isFavorite ? 'currentColor' : 'none'} />
           </Button>
         </div>
@@ -76,10 +100,17 @@ const MobileMusicPlayer = ({
 
       {/* Progress Bar */}
       <div className="px-8 py-2">
-        <Slider value={[currentTime]} max={currentSong.duration} step={1} onValueChange={onSeek} className="mb-2" />
+        <Slider 
+          value={[currentTime]} 
+          max={duration} 
+          step={1} 
+          onValueChange={onSeek} 
+          className="mb-2"
+          disabled={!currentSong.audioUrl}
+        />
         <div className="flex justify-between text-white/60 text-sm">
           <span>{formatTime(currentTime)}</span>
-          <span>{formatTime(currentSong.duration)}</span>
+          <span>{formatTime(duration)}</span>
         </div>
       </div>
 
@@ -89,8 +120,18 @@ const MobileMusicPlayer = ({
           <Button variant="ghost" size="icon" onClick={onPrevious} className="text-white hover:bg-white/20">
             <SkipBack size={32} />
           </Button>
-          <Button onClick={onPlayPause} className="w-16 h-16 rounded-full bg-white text-black hover:bg-gray-200 transition-all duration-300">
-            {isPlaying ? <Pause size={28} /> : <Play size={28} />}
+          <Button 
+            onClick={onPlayPause} 
+            disabled={isLoading || !!error}
+            className="w-16 h-16 rounded-full bg-white text-black hover:bg-gray-200 transition-all duration-300 disabled:opacity-50"
+          >
+            {isLoading ? (
+              <Loader2 size={28} className="animate-spin" />
+            ) : isPlaying ? (
+              <Pause size={28} />
+            ) : (
+              <Play size={28} />
+            )}
           </Button>
           <Button variant="ghost" size="icon" onClick={onNext} className="text-white hover:bg-white/20">
             <SkipForward size={32} />
@@ -110,6 +151,8 @@ const MobileMusicPlayer = ({
           <List size={24} />
         </Button>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default MobileMusicPlayer;

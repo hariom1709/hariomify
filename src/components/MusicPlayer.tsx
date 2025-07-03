@@ -1,6 +1,5 @@
 
-import { useState, useEffect } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Heart, Volume2 } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Heart, Volume2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -11,6 +10,7 @@ interface Song {
   artist: string;
   thumbnail: string;
   duration: number;
+  audioUrl?: string;
 }
 
 interface MusicPlayerProps {
@@ -22,6 +22,13 @@ interface MusicPlayerProps {
   onToggleFavorite: (songId: string) => void;
   favorites: string[];
   onSongClick?: () => void;
+  currentTime: number;
+  duration: number;
+  onSeek: (value: number[]) => void;
+  volume: number;
+  onVolumeChange: (volume: number) => void;
+  isLoading?: boolean;
+  error?: string | null;
 }
 
 const MusicPlayer = ({
@@ -33,49 +40,20 @@ const MusicPlayer = ({
   onToggleFavorite,
   favorites,
   onSongClick,
+  currentTime,
+  duration,
+  onSeek,
+  volume,
+  onVolumeChange,
+  isLoading,
+  error,
 }: MusicPlayerProps) => {
-  const [currentTime, setCurrentTime] = useState(0);
-  const [volume, setVolume] = useState(75);
   const isMobile = useIsMobile();
-
-  // Reset current time when song changes
-  useEffect(() => {
-    setCurrentTime(0);
-  }, [currentSong?.id]);
-
-  useEffect(() => {
-    if (isPlaying && currentSong) {
-      const interval = setInterval(() => {
-        setCurrentTime((prev) => {
-          if (prev >= currentSong.duration) {
-            onNext();
-            return 0;
-          }
-          return prev + 1;
-        });
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [isPlaying, currentSong, onNext]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const handleSeek = (value: number[]) => {
-    setCurrentTime(value[0]);
-  };
-
-  const handleNext = () => {
-    setCurrentTime(0);
-    onNext();
-  };
-
-  const handlePrevious = () => {
-    setCurrentTime(0);
-    onPrevious();
   };
 
   const handleSongInfoClick = () => {
@@ -104,6 +82,7 @@ const MusicPlayer = ({
           <div className="min-w-0 flex-1">
             <h4 className="text-white font-medium truncate">{currentSong.title}</h4>
             <p className="text-gray-400 text-sm truncate">{currentSong.artist}</p>
+            {error && <p className="text-red-400 text-xs truncate">{error}</p>}
           </div>
           <Button
             variant="ghost"
@@ -126,21 +105,28 @@ const MusicPlayer = ({
             <Button
               variant="ghost"
               size="icon"
-              onClick={handlePrevious}
+              onClick={onPrevious}
               className="text-gray-300 hover:text-white"
             >
               <SkipBack size={20} />
             </Button>
             <Button
               onClick={onPlayPause}
-              className="w-10 h-10 rounded-full bg-white text-black hover:bg-gray-200 transition-all duration-300"
+              disabled={isLoading || !!error}
+              className="w-10 h-10 rounded-full bg-white text-black hover:bg-gray-200 transition-all duration-300 disabled:opacity-50"
             >
-              {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+              {isLoading ? (
+                <Loader2 size={20} className="animate-spin" />
+              ) : isPlaying ? (
+                <Pause size={20} />
+              ) : (
+                <Play size={20} />
+              )}
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              onClick={handleNext}
+              onClick={onNext}
               className="text-gray-300 hover:text-white"
             >
               <SkipForward size={20} />
@@ -154,13 +140,14 @@ const MusicPlayer = ({
             </span>
             <Slider
               value={[currentTime]}
-              max={currentSong.duration}
+              max={duration}
               step={1}
-              onValueChange={handleSeek}
+              onValueChange={onSeek}
               className="flex-1"
+              disabled={!currentSong.audioUrl}
             />
             <span className="text-xs text-gray-400 w-10 text-center">
-              {formatTime(currentSong.duration)}
+              {formatTime(duration)}
             </span>
           </div>
         </div>
@@ -172,7 +159,7 @@ const MusicPlayer = ({
             value={[volume]}
             max={100}
             step={1}
-            onValueChange={(value) => setVolume(value[0])}
+            onValueChange={(value) => onVolumeChange(value[0])}
             className="w-24"
           />
         </div>
